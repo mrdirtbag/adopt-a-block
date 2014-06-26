@@ -16,7 +16,7 @@
 function initialize() {
   var mapOptions = {
     center: new google.maps.LatLng(34.421461,-119.855347),
-    zoom: 11
+    zoom: 15
   };
 
   var map = new google.maps.Map(document.getElementById('map-canvas'),
@@ -42,15 +42,24 @@ function initialize() {
       fillColor: '#ffff00',
       fillOpacity: 1,
       strokeWeight: 5,
-      clickable: false,
+      clickable: true,
       editable: true,
       zIndex: 1
     }
+
   });
-  drawingManager.setMap(map);
+drawingManager.setMap(map);
+console.log('hh')
+
 }
 
 google.maps.event.addDomListener(window, 'load', initialize);
+google.maps.event.addListener(drawingManager, 'circlecomplete', function(event) {
+    var radius = circle.getRadius();
+    console.log(radius);
+    console.log('circle radius');
+
+});
 
     </script>
   </head>
