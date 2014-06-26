@@ -3,6 +3,7 @@ package com.mcgoldricksolutions.hackathon2014.adoptablock;
 import android.app.Activity;
 import android.app.ActionBar;
 import android.app.Fragment;
+import android.view.View.OnClickListener;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -11,7 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.os.Build;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements OnClickListener {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -22,6 +23,8 @@ public class MainActivity extends Activity {
 			getFragmentManager().beginTransaction()
 					.add(R.id.container, new PlaceholderFragment()).commit();
 		}
+		StartStopButton btnStartStop = (StartStopButton)this.findViewById(R.id.btnStartStop);
+		btnStartStop.setOnClickListener(this);
 	}
 
 	@Override
@@ -43,6 +46,16 @@ public class MainActivity extends Activity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
+	
+	@Override
+	public void onClick(View v) {
+		if (v.getId() == R.id.btnStartStop) {
+			
+			StartStopButton btnStartStop = (StartStopButton) this.findViewById(R.id.btnStartStop);
+			btnStartStop.clicked();
+		}
+		
+	}
 
 	/**
 	 * A placeholder fragment containing a simple view.
@@ -57,7 +70,18 @@ public class MainActivity extends Activity {
 				Bundle savedInstanceState) {
 			View rootView = inflater.inflate(R.layout.fragment_main, container,
 					false);
+			
 			return rootView;
+		}
+		
+		@Override
+		public void onClick(View v) {
+			if (v.getId() == R.id.btnStartStop) {
+				
+				StartStopButton btnStartStop = (StartStopButton) getActivity().findViewById(R.id.btnStartStop);
+				btnStartStop.clicked();
+			}
+			
 		}
 	}
 
