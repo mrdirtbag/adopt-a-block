@@ -3,6 +3,7 @@ package com.mcgoldricksolutions.hackathon2014.adoptablock;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.widget.ImageButton;
 
 /**
@@ -11,9 +12,6 @@ import android.widget.ImageButton;
  *
  */
 public class StartStopButton extends ImageButton {
-
-	protected static Drawable START_IMAGE;
-	protected static Drawable STOP_IMAGE;
 	
 	protected boolean started = false;
 	
@@ -23,17 +21,16 @@ public class StartStopButton extends ImageButton {
 	
 	public StartStopButton(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		START_IMAGE = context.getResources().getDrawable(R.drawable.start_button);
-		STOP_IMAGE = context.getResources().getDrawable(R.drawable.stop_button);
 	}
 
 	public void clicked() {
+		Log.d("Btn", "clicked: " + started);
 		started = !started;
-		
-		if(!started){
-			this.setBackgroundDrawable(START_IMAGE);
+		Log.d("Btn", "status: " + started);
+		if(started){
+			this.setBackgroundResource(R.drawable.stop_button);
 		} else {
-			this.setBackgroundDrawable(STOP_IMAGE);
+			this.setBackgroundResource(R.drawable.start_button);
 		}
 	}
 }
