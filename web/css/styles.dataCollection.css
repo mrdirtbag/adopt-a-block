@@ -1,0 +1,17 @@
+body {
+  background-color: #FFF;
+  background-image: url('../images/beautiful-santaBarbara.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  overflow: hidden;
+}
+
+.form-horizontal {
+  max-width: 650px;
+  padding: 15px;
+  margin: 0 auto;
+  background-color: #f3f3f3;
+  position: relative;
+  top: 75px;
+}

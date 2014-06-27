@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+  <title>Google Maps</title>
+  <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;sensor=false&amp;key=ABQIAAAAPDUET0Qt7p2VcSk6JNU1sBSM5jMcmVqUpI7aqV44cW1cEECiThQYkcZUPRJn9vy_TWxWvuLoOfSFBw" type="text/javascript"></script>
+
+</head>
+
+<body onunload="GUnload()">
+
+  <!-- you can use tables or divs for the overall layout -->
+  <table border=1>
+    <tr>
+      <td>
+         <div id="map" style="width: 550px; height: 450px"></div>
+      </td>
+      <td width = 150 valign="top" style="text-decoration: underline; color: #4444ff;">
+         <div id="side_bar"></div>
+      </td>
+    </tr>
+  </table>
+
+  <script type="text/javascript">
+  if (GBrowserIsCompatible()) {
+    // Display the map, with some controls
+    var map = new GMap(document.getElementById("map"));
+    map.addControl(new GLargeMapControl());
+    map.addControl(new GMapTypeControl());
+    map.setCenter(new GLatLng(43.907787,-79.359741),9);
+
+    // arrays to hold copies of the markers and html used by the side_bar
+
+    var side_bar_html = "";
+    var gmarkers = [];
+    var names = [];
+    var i = 0;
+
+    function createMarker(point, name, comments, buckets, category) {
+
+      var marker = new GMarker(point);
+      GEvent.addListener(marker, "click", function() {
+        marker.openInfoWindowHtml(comments);
+      });
+
+      gmarkers[i] = marker;
+      names[i] = name;
+      side_bar_html += '<a href="javascript:myclick(' + i + ')">' + name + '<\/a><br>';
+      i++;
+      return marker;
+
+    }
+
+    function whenClick(i) {
+      gmarkers[i].openInfoWindowHtml(names[i]);
+    }
+
+    process_it = function(doc) {
+
+      var jsonData = eval('(' + doc ')');
+
+      //markers
+
+      for(var i = 0; i < jsonData.users.length; i++) {
+        var pts = [];
+        for(var j=0; j < jsonData.users[i].points.length; j++) {
+
+        var point = new GLatLng(jsonData.users[i].points[j].lat, jsonData.users[i].points[j].long);
+
+        var marker = createMarker(jsonData.users[i].points[j], jsonData.markers[i].label, jsonData.markers[i].html);
+        map.addOverlay(marker);
+      }
+      }
+
+      document.getElementById("side_bar").innerHTML = side_bar_html;
+
+        //   polylines ===
+        for (var i=0; i<jsonData.lines.length; i++) {
+          var pts = [];
+          for (var j=0; j<jsonData.lines[i].points.length; j++) {
+            pts[j] = new GLatLng(jsonData.lines[i].points[j].lat, jsonData.lines[i].points[j].lng);
+          }
+          map.addOverlay(new GPolyline(pts, jsonData.lines[i].colour, jsonData.lines[i].width));
+        }
+
+
+    }
+
+    GDownloadUrl("everything.json", process_it);
+
+  } else {
+    alert("Sorry");
+
+  }
+
+  </script>
+</body>
+</html>

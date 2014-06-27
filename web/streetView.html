@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Directly accessing Street View data</title>
+    <style>
+      html, body, #map-canvas {
+        height: 80%;
+        margin: 0px;
+        padding: 0px
+      }
+    </style>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
+    <script>
+var map;
+var berkeley = new google.maps.LatLng(37.869085,-122.254775);
+var sv = new google.maps.StreetViewService();
+
+var panorama;
+
+function initialize() {
+  var fillArray = ['red', 'blue', 'yellow', 'green'];
+  panorama = new google.maps.StreetViewPanorama(document.getElementById('pano'));
+
+  // Set up the map
+  var mapOptions = {
+    mapTypeControlOptions:  {
+      mapTypeIds:
+      [google.maps.MapTypeId.ROADMAP, "Edited"]
+
+    },
+    center: berkeley,
+    zoom: 16,
+    streetViewControl: false
+  };
+  map = new google.maps.Map(document.getElementById('map-canvas'),
+      mapOptions);
+
+  var styledMapType = new google.maps.StyledMapType(stylez, {name: "Edited"});
+
+  google.maps.event.addListener(map, 'click', function(event) {
+      sv.getPanoramaByLocation(event.latLng, 50, processSVData);
+  });
+
+  var layer = new google.maps.visualization.DynamicMapsEngineLayer({
+    layerId: '06673056454046135537-08896501997766553811',
+    map: map,
+    suppressInfoWindows: false,
+    clickable: true
+  });
+
+        var marker = new google.maps.Marker({
+            position: berkeley,
+            map: map,
+            animation: google.maps.Animation.DROP,
+            title:"Hello World!"
+        }),
+
+        infowindow = new google.maps.InfoWindow({
+            content: "<div><img width='254' height='355' src='http://www.hyperpac.de/wp-content/uploads/2009/09/255px-Excitebike_cover.jpg'</div>"
+        });
+
+        map.mapTypes.set("Edited", styledMapType);
+        map.setMapTypeId('Edited');
+
+
+  function toggleBounce () {
+        if (marker.getAnimation() != null) {
+            marker.setAnimation(null);
+        } else {
+            marker.setAnimation(google.maps.Animation.BOUNCE);
+        }
+    }
+
+}
+
+function processSVData(data, status) {
+  if (status == google.maps.StreetViewStatus.OK) {
+    var marker = new google.maps.Marker({
+      position: data.location.latLng,
+      map: map,
+      title: data.location.description
+    });
+
+    panorama.setPano(data.location.pano);
+    panorama.setPov({
+      heading: 270,
+      pitch: 0
+    });
+    panorama.setVisible(true);
+
+    google.maps.event.addListener(marker, 'click', function() {
+
+      var markerPanoID = data.location.pano;
+      // Set the Pano to use the passed panoID
+      panorama.setPano(markerPanoID);
+      panorama.setPov({
+        heading: 270,
+        pitch: 0
+      });
+      panorama.setVisible(true);
+    });
+  } else {
+    alert('Street View data not found for this location.');
+  }
+
+
+
+}
+
+google.maps.event.addDomListener(window, 'load', initialize);
+
+    </script>
+  </head>
+  <body>
+    <div id="map-canvas" style="width: 45%; height: 100%;float:left"></div>
+    <div id="pano" style="width: 45%; height: 100%;float:left"></div>
+  </body>
+</html>
