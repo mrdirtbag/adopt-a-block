@@ -1,0 +1,14 @@
+{
+  "name": "Mudy",
+  "version": "0.0.0",
+  "description": "Mudit deploying node",
+  "main": "jquery-1.10.2.min.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "logfmt": "^1.1.2"
+  }
+}
