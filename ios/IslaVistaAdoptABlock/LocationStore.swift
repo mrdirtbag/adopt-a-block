@@ -38,10 +38,10 @@ class LocationStore: NSObject, CLLocationManagerDelegate {
             locationManager.delegate = delegate
         }
         
-        locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters;
+        locationManager.desiredAccuracy = kCLLocationAccuracyBest;
         
         // Set a movement threshold for new events.
-        locationManager.distanceFilter = 10; // meters
+        locationManager.distanceFilter = 1; // meters
         
         locationManager.requestAlwaysAuthorization()
         locationManager.startUpdatingLocation()
