@@ -1,69 +1,103 @@
-<!DOCTYPE html>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
-  <head>
-    <title>Drawing tools</title>
-    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
-    <meta charset="utf-8">
-    <style>
-      html, body, #map-canvas {
-        height: 100%;
-        margin: 0px;
-        padding: 0px
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <title>Google Maps</title>
+    <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;sensor=false&amp;key=ABQIAAAAPDUET0Qt7p2VcSk6JNU1sBSM5jMcmVqUpI7aqV44cW1cEECiThQYkcZUPRJn9vy_TWxWvuLoOfSFBw" type="text/javascript"></script>
+  </head>
+  <body onunload="GUnload()">
+
+    <!-- you can use tables or divs for the overall layout -->
+    <table border=1>
+      <tr>
+        <td>
+           <div id="map" style="width: 550px; height: 450px"></div>
+        </td>
+        <td width = 150 valign="top" style="text-decoration: underline; color: #4444ff;">
+           <div id="side_bar"></div>
+        </td>
+      </tr>
+    </table>
+
+    <script type="text/javascript">
+    //<![CDATA[
+    if (GBrowserIsCompatible()) {
+      // Display the map, with some controls
+      var map = new GMap(document.getElementById("map"));
+      map.addControl(new GLargeMapControl());
+      map.addControl(new GMapTypeControl());
+      map.setCenter(new GLatLng(43.907787,-79.359741),9);
+
+      // arrays to hold copies of the markers and html used by the side_bar
+
+      var side_bar_html = "";
+      var gmarkers = [];
+      var htmls = [];
+      var i = 0;
+
+      // A function to create the marker and set up the event window
+      function createMarker(point,name,html) {
+        var marker = new GMarker(point);
+        GEvent.addListener(marker, "click", function() {
+          marker.openInfoWindowHtml(html);
+        });
+        // save the info we need to use later for the side_bar
+        gmarkers[i] = marker;
+        htmls[i] = html;
+        // add a line to the side_bar html
+        side_bar_html += '<a href="javascript:myclick(' + i + ')">' + name + '<\/a><br>';
+        i++;
+        return marker;
       }
-    </style>
-    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=drawing"></script>
-    <script>
-function initialize() {
-  var mapOptions = {
-    center: new google.maps.LatLng(34.421461,-119.855347),
-    zoom: 15
-  };
 
-  var map = new google.maps.Map(document.getElementById('map-canvas'),
-    mapOptions);
+      // This function picks up the click and opens the corresponding info window
+      function myclick(i) {
+        gmarkers[i].openInfoWindowHtml(htmls[i]);
+      }
 
-  var drawingManager = new google.maps.drawing.DrawingManager({
-    drawingMode: google.maps.drawing.OverlayType.MARKER,
-    drawingControl: true,
-    drawingControlOptions: {
-      position: google.maps.ControlPosition.TOP_CENTER,
-      drawingModes: [
-        google.maps.drawing.OverlayType.MARKER,
-        google.maps.drawing.OverlayType.CIRCLE,
-        google.maps.drawing.OverlayType.POLYGON,
-        google.maps.drawing.OverlayType.POLYLINE,
-        google.maps.drawing.OverlayType.RECTANGLE
-      ]
-    },
-    markerOptions: {
-      icon: 'images/beachflag.png'
-    },
-    circleOptions: {
-      fillColor: '#ffff00',
-      fillOpacity: 1,
-      strokeWeight: 5,
-      clickable: true,
-      editable: true,
-      zIndex: 1
+      process_it = function(doc) {
+        // === Parse the JSON document ===
+        var jsonData = eval('(' + doc + ')');
+
+        // === Plot the markers ===
+        for (var i=0; i<jsonData.markers.length; i++) {
+          var point = new GLatLng(jsonData.markers[i].lat, jsonData.markers[i].lng);
+          var marker = createMarker(point, jsonData.markers[i].label, jsonData.markers[i].html);
+          map.addOverlay(marker);
+        }
+
+        // put the assembled side_bar_html contents into the side_bar div
+        document.getElementById("side_bar").innerHTML = side_bar_html;
+
+        // === Plot the polylines ===
+        for (var i=0; i<jsonData.lines.length; i++) {
+          var pts = [];
+          for (var j=0; j<jsonData.lines[i].points.length; j++) {
+            pts[j] = new GLatLng(jsonData.lines[i].points[j].lat, jsonData.lines[i].points[j].lng);
+          }
+          map.addOverlay(new GPolyline(pts, jsonData.lines[i].colour, jsonData.lines[i].width));
+        }
+      }
+
+      // ================================================================
+      // === Fetch the JSON data file ====
+      GDownloadUrl("example.json", process_it);
+      // ================================================================
+
     }
 
-  });
-drawingManager.setMap(map);
-console.log('hh')
+    else {
+      alert("Sorry, the Google Maps API is not compatible with this browser");
+    }
 
-}
+    // This Javascript is based on code provided by the
+    // Community Church Javascript Team
+    // http://www.bisphamchurch.org.uk/
+    // http://econym.org.uk/gmap/
 
-google.maps.event.addDomListener(window, 'load', initialize);
-google.maps.event.addListener(drawingManager, 'circlecomplete', function(event) {
-    var radius = circle.getRadius();
-    console.log(radius);
-    console.log('circle radius');
-
-});
-
+    //]]>
     </script>
-  </head>
-  <body>
-    <div id="map-canvas"></div>
   </body>
+
 </html>

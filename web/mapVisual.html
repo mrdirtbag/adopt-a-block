@@ -1,0 +1,86 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Dynamic Maps Engine Layer</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <style>
+      html, body, #map-canvas {
+        height: 100%;
+        margin: 0px;
+        padding: 0px
+      }
+    </style>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=visualization"></script>
+    <script>
+function initialize() {
+
+  var fillArray = ['red', 'blue', 'yellow', 'green'];
+
+  var mapOptions = {
+    zoom: 14,
+    center: new google.maps.LatLng(37.869085,-122.254775)
+  };
+
+  var map = new google.maps.Map(document.getElementById('map-canvas'),
+    mapOptions);
+
+  var layer = new google.maps.visualization.DynamicMapsEngineLayer({
+    layerId: 'zfUJDYu6t0RE.kUhjBOMOzxU4',
+    map: trash,
+    suppressInfoWindows: true,
+    clickable: true
+  });
+
+  google.maps.event.addListener(layer, 'mouseover', function(event) {
+    var style = layer.getFeatureStyle(event.featureId);
+    style.fillColor = fillArray[event.featureId - 1];
+    style.fillOpacity = '0.8';
+  });
+
+  google.maps.event.addListener(layer, 'mouseout', function(event) {
+    var style = layer.getFeatureStyle(event.featureId).resetAll();
+  });
+
+  map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions),
+
+        styledMapType = new google.maps.StyledMapType(stylez, {name: "Edited"}),
+
+        marker = new google.maps.Marker({
+            position: latlng,
+            map: map,
+            animation: google.maps.Animation.DROP,
+            title:"Hello World!"
+        }),
+
+        infowindow = new google.maps.InfoWindow({
+            content: "<div><img width='254' height='355' src='http://www.hyperpac.de/wp-content/uploads/2009/09/255px-Excitebike_cover.jpg'</div>"
+        });
+
+        map.mapTypes.set("Edited", styledMapType);
+        map.setMapTypeId('Edited');
+    
+
+  function toggleBounce () {
+        if (marker.getAnimation() != null) {
+            marker.setAnimation(null);
+        } else {
+            marker.setAnimation(google.maps.Animation.BOUNCE);
+        }
+    }
+
+  google.maps.event.addListener(marker, 'click', function () {
+        toggleBounce();
+        infowindow.open(map, marker);
+        setTimeout(toggleBounce, 1500);
+    });
+}
+google.maps.event.addDomListener(window, 'load', initialize);
+
+    </script>
+  </head>
+  <body>
+    <div id="map-canvas"></div>
+  </body>
+</html>

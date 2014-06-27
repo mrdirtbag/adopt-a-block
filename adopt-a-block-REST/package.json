@@ -1,0 +1,13 @@
+{
+  "name": "adopt-a-block-REST",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "mongodb": "1.4.7",
+    "restify" : "2.8.1",
+    "underscore" : "1.6.0"
+  }
+}

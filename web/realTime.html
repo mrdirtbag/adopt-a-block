@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <title>Google Maps Multiple Markers</title>
+
+    <SCRIPT TYPE="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></SCRIPT>
+    <SCRIPT TYPE="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min.js"></SCRIPT>
+
+
+
+    <script src="http://maps.google.com/maps/api/js?sensor=false" type="text/javascript"></script>
+</head>
+
+<body>
+    <div id="map" style="width: 100%; height: 400px;"></div>
+
+    <script type="text/javascript">
+
+    var map = new google.maps.Map(document.getElementById('map'), {
+                    zoom: 16,
+                    center: new google.maps.LatLng(34.412939, -119.859315),
+                    mapTypeId: google.maps.MapTypeId.ROADMAP
+                });
+
+                var infowindow = new google.maps.InfoWindow();
+                var image = 'humanicon.png';
+
+
+    function loadJSON() {
+        $(function() {
+            $.getJSON("http://adopt-a-block.herokuapp.com/GETrealtime", function(data, textStatus, jqXHR) {
+
+
+
+                // console.log(data);
+
+
+
+                console.log(data);
+                var marker = new google.maps.Marker({
+                    position: new google.maps.LatLng(data[0].lat, data[0].long),
+                    map: map
+                    
+                });
+
+                // google.maps.event.addListener(marker, 'click', (function(marker, i) {
+                //   return function() {
+                //     infowindow.setContent(locations[i][0]);
+                //     infowindow.open(map, marker);
+                //   }
+                // })(marker, i));
+
+
+            }); //getJSON
+        }); //ready
+
+    } //loadJSON
+
+    setInterval( loadJSON, 1000 );
+
+    </script>
+</body>
+
+</html>

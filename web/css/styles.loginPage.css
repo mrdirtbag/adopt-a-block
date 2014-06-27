@@ -7,6 +7,11 @@ body {
   background-position: center;
   background-repeat: no-repeat;
   overflow: hidden;
+  color: white;
+  text-decoration: underline;
+  font-size: 25px;
+
+
 }
 
 .form-signin {
@@ -74,6 +79,19 @@ body {
   -moz-perspective: 800px;
   -webkit-perspective: 800px;
   perspective: 800px;
+  background-color: #ffffff;
+}
+
+.adopt {
+  text-align: center;
+  text-font: Impact;
+  text-indent: 300px;
+
+  width: 50%;
+  position: absolute;
+  top: 600px;
+  bottom: 80px;
+ 
 }
 
 .container form {
