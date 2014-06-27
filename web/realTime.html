@@ -7,43 +7,85 @@
 
     <SCRIPT TYPE="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></SCRIPT>
     <SCRIPT TYPE="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min.js"></SCRIPT>
-
-
-
     <script src="http://maps.google.com/maps/api/js?sensor=false" type="text/javascript"></script>
 </head>
 
 <body>
-    <div id="map" style="width: 100%; height: 400px;"></div>
+    <div id="map" style="width: 100%; height: 500px;"></div>
 
     <script type="text/javascript">
-
     var map = new google.maps.Map(document.getElementById('map'), {
-                    zoom: 16,
-                    center: new google.maps.LatLng(34.412939, -119.859315),
-                    mapTypeId: google.maps.MapTypeId.ROADMAP
-                });
+        zoom: 18,
 
-                var infowindow = new google.maps.InfoWindow();
-                var image = 'humanicon.png';
+        // IV
+        // center: new google.maps.LatLng(34.412939, -119.859315),
 
+        // Citrix
+        center: new google.maps.LatLng(34.4302422367357, -119.8905125354602),
+
+
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+    });
+
+    var infowindow = new google.maps.InfoWindow();
+
+    // counter used to generate the request to pull imaged number markers
+    var counter = 0;
+
+    var currentLat, currentLong;
+
+    var requestCounts = 0;
 
     function loadJSON() {
         $(function() {
             $.getJSON("http://adopt-a-block.herokuapp.com/GETrealtime", function(data, textStatus, jqXHR) {
+                requestCounts++;
+                console.log("Counts: ", requestCounts.toString(), " -- ", "data length: ", data.length);
+
+                // did we receive anything?
+                if (data.length > 0) {
 
 
 
-                // console.log(data);
+                    // have we seen these coordinates before?
+                    if (currentLat === data[0].lat && currentLong === data[0].long) {
+                        // yes, do nothing
+                    } else {
+                        // nope, we have not seen this before
+                        counter++;
+
+                        var image = {
+                            url: 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=' + counter.toString() + '|FF0000|000000',
+                            // This marker is 26 pixels wide by 32 pixels tall.
+                            size: new google.maps.Size(26, 32),
+                            // The origin for this image is 0,0.
+                            origin: new google.maps.Point(0, 0),
+                            // The anchor for this image is the base of the flagpole at 0,32.
+                            anchor: new google.maps.Point(0, 32)
+                        };
+
+                        var shape = {
+                            coords: [1, 1, 1, 20, 18, 20, 18, 1],
+                            type: 'poly'
+                        };
+
+                        var marker = new google.maps.Marker({
+                            position: new google.maps.LatLng(data[0].lat, data[0].long),
+                            map: map,
+                            icon: image,
+                            shape: shape
+                        });
+
+                        currentLat = data[0].lat;
+                        currentLong = data[0].long;
+
+                    }
+
+
+                }
 
 
 
-                console.log(data);
-                var marker = new google.maps.Marker({
-                    position: new google.maps.LatLng(data[0].lat, data[0].long),
-                    map: map
-                    
-                });
 
                 // google.maps.event.addListener(marker, 'click', (function(marker, i) {
                 //   return function() {
@@ -58,8 +100,9 @@
 
     } //loadJSON
 
-    setInterval( loadJSON, 1000 );
 
+    // get the JSON every 1 second and load a marker
+    setInterval(loadJSON, 1000);
     </script>
 </body>
 
