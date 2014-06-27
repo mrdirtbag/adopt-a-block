@@ -1,7 +1,7 @@
 body {
   padding-top: 40px;
   padding-bottom: 40px;
-  background: url('../images/volunteer-collage.jpg');
+  background-image: url('../images/volunteer-collage.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -167,6 +167,7 @@ body {
   height:26px;
   content:'<- Forgot password?';
   color: white;
+  font-weight: bold;
   position:absolute;
   right:-170px;
   top:15px;
