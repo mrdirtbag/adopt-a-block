@@ -9,7 +9,7 @@
 import UIKit
 import CoreLocation
 
-class ViewController: UIViewController, CLLocationManagerDelegate {
+class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDelegate {
     @IBOutlet var nameTextField: UITextField
     @IBOutlet var actionButton: UIButton
     @IBOutlet var bucketLabel: UILabel
@@ -20,6 +20,21 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        
+        let defaults = NSUserDefaults.standardUserDefaults()
+        let name : AnyObject! = defaults.objectForKey("name")
+        
+        var textFieldName: String = ""
+        if name != nil {
+            textFieldName = name as String
+        }
+        
+        if textFieldName != "" {
+            nameTextField.text = name as NSString
+            actionButton.enabled = true
+        } else {
+            actionButton.enabled = false
+        }
         
         showCollectState()
     }
@@ -34,6 +49,10 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
             sender.setTitle("Stop", forState: UIControlState.Normal)
             
             locationStore.startLocation()
+            
+            bucketTextField.text = ""
+            
+            nameTextField.enabled = false
         } else {
             sender.setTitle("Start", forState: UIControlState.Normal)
             
@@ -44,7 +63,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     }
 
     @IBAction func pressedSubmit(sender: UIButton) {
-        println(nameTextField.text)
+        view.endEditing(true)
         
         let defaults = NSUserDefaults.standardUserDefaults()
         let uid : String = String(defaults.objectForKey("UID") as NSString)
@@ -59,9 +78,26 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
             self.presentViewController(alert, animated: true, completion: nil)
         } else {
             locationStore.submitLocation(nameTextField.text, uid: uid, num_buckets: bucketTextField.text.toInt()!)
+            
+            showCollectState()
+            
+            nameTextField.enabled = true
         }
+    }
+
+    @IBAction func nameTextFieldDidEndOnExit(sender: UITextField) {
+
+    }
+
+    @IBAction func nameTextFieldEditingDidEnd(sender: UITextField) {
+        NSUserDefaults.standardUserDefaults().setObject(sender.text, forKey: "name")
+        NSUserDefaults.standardUserDefaults().synchronize()
         
-        showCollectState()
+        if sender.text != "" {
+            actionButton.enabled = true
+        } else {
+            actionButton.enabled = false
+        }
     }
     
     func showSubmitState() {
@@ -80,5 +116,14 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         actionButton.hidden = false
     }
     
+    override func touchesBegan(touches: NSSet!, withEvent event: UIEvent!) {
+        var touch: UITouch = event.allTouches().anyObject() as UITouch
+        
+        if nameTextField.isFirstResponder() && nameTextField != touch.view {
+            nameTextField.resignFirstResponder()
+        } else if bucketTextField.isFirstResponder() && bucketTextField != touch.view {
+            bucketTextField.resignFirstResponder()
+        }
+    }
 }
 
