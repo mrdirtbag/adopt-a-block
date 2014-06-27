@@ -1,10 +1,12 @@
 body {
   padding-top: 40px;
   padding-bottom: 40px;
+  background-color: #FFF;
   background-image: url('../images/volunteer-collage.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+  overflow: hidden;
 }
 
 .form-signin {
