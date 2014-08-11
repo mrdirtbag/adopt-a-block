@@ -11,8 +11,8 @@ import CoreLocation
 class LocationStore: NSObject, CLLocationManagerDelegate {
     
     var locationManager: CLLocationManager = CLLocationManager()
-    var locationDictionary: Array<Dictionary<String,AnyObject>>?
-    var currentLocations = Dictionary<String,Double>[]()
+    var locationDictionary: [[String:AnyObject]]?
+    var currentLocations = [[String:Double]]()
     var lastSentRealtimeDataEpoch: Double?
     var sendingRealtimData: Bool = false
     let REALTIME_THRESHOLD: Double = 10000.0 //120000.0 // sending threshold in milliseconds
@@ -32,10 +32,10 @@ class LocationStore: NSObject, CLLocationManagerDelegate {
             locationManager = CLLocationManager()
         }
         
-        if !delegate {
-            locationManager.delegate = self
+        if let del = delegate {
+            locationManager.delegate = del
         } else {
-            locationManager.delegate = delegate
+            locationManager.delegate = self
         }
         
         locationManager.desiredAccuracy = kCLLocationAccuracyBest;
@@ -52,14 +52,14 @@ class LocationStore: NSObject, CLLocationManagerDelegate {
     }
     
     
-    func locationManager(manager: CLLocationManager!, didUpdateLocations locations: AnyObject[]!) {
+    func locationManager(manager: CLLocationManager!, didUpdateLocations locations: [AnyObject]!) {
         let currLocation: CLLocation = locations[0] as CLLocation
         let epoch = round(1000*currLocation.timestamp.timeIntervalSince1970)
-        let locationDictionary = ["lat": currLocation.coordinate.latitude, "long": currLocation.coordinate.longitude, "epoch": epoch]
+        let locationDictionary: [String:Double] = ["lat": currLocation.coordinate.latitude, "long": currLocation.coordinate.longitude, "epoch": epoch]
         
         println(locationDictionary)
         
-        currentLocations += locationDictionary
+        currentLocations.append(locationDictionary)
         
         if shouldSendRealtimeLocation(locationDictionary) {
             sendRealtimeLocation(locationDictionary)
@@ -67,8 +67,8 @@ class LocationStore: NSObject, CLLocationManagerDelegate {
     }
     
     func shouldSendRealtimeLocation(data: Dictionary<String, Double>) -> Bool {
-        if lastSentRealtimeDataEpoch  {
-            if !sendingRealtimData && (data["epoch"]! - lastSentRealtimeDataEpoch!) > REALTIME_THRESHOLD {
+        if let evallastSentRealtimeDataEpoch = lastSentRealtimeDataEpoch {
+            if !sendingRealtimData && (data["epoch"]! - evallastSentRealtimeDataEpoch) > REALTIME_THRESHOLD {
                 return true
             } else {
                 return false

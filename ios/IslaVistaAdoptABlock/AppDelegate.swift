@@ -21,7 +21,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if uid == nil {
             let time = round(Double(NSDate().timeIntervalSince1970))
             let random = arc4random_uniform(1000)
-            var newUid = String(NSString(format:"%X%04X", time, random))
+            var newUid = String(format: "%X%04X", time, random)
+            
+            NSLog(newUid);
             
             NSUserDefaults.standardUserDefaults().setObject(newUid, forKey: "UID")
             NSUserDefaults.standardUserDefaults().synchronize()

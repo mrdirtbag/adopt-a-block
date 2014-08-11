@@ -10,11 +10,11 @@ import UIKit
 import CoreLocation
 
 class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDelegate {
-    @IBOutlet var nameTextField: UITextField
-    @IBOutlet var actionButton: UIButton
-    @IBOutlet var bucketLabel: UILabel
-    @IBOutlet var bucketTextField: UITextField
-    @IBOutlet var submitButton: UIButton
+    @IBOutlet weak var nameTextField: UITextField!
+    @IBOutlet weak var actionButton: UIButton!
+    @IBOutlet weak var bucketLabel: UILabel!
+    @IBOutlet weak var bucketTextField: UITextField!
+    @IBOutlet weak var submitButton: UIButton!
     var locationStore: LocationStore = LocationStore()
                             
     override func viewDidLoad() {
@@ -66,13 +66,13 @@ class ViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDe
         view.endEditing(true)
         
         let defaults = NSUserDefaults.standardUserDefaults()
-        let uid : String = String(defaults.objectForKey("UID") as NSString)
+        let uid: NSString! = defaults.objectForKey("UID") as AnyObject! as NSString!
         
         if nameTextField.text == "" {
             var alert = UIAlertController(title: "No Name", message: "Enter a name to submit", preferredStyle: UIAlertControllerStyle.Alert)
             alert.addAction(UIAlertAction(title: "Click", style: UIAlertActionStyle.Default, handler: nil))
             self.presentViewController(alert, animated: true, completion: nil)
-        } else if bucketTextField.text == "" || !bucketTextField.text.toInt() {
+        } else if bucketTextField.text.isEmpty || bucketTextField.text.toInt() == nil {
             var alert = UIAlertController(title: "No buckets", message: "Enter the number of buckets collected", preferredStyle: UIAlertControllerStyle.Alert)
             alert.addAction(UIAlertAction(title: "Click", style: UIAlertActionStyle.Default, handler: nil))
             self.presentViewController(alert, animated: true, completion: nil)
